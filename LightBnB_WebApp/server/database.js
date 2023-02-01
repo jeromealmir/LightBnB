@@ -146,47 +146,34 @@ const getAllProperties = function(options, limit = 10) {
   
   // if owner_id is passed in, return properties that only belongs to that owner
   if (options.owner_id) {
+    const clause = (queryParams.length === 0) ? 'WHERE' : 'AND';
     queryParams.push(`${options.owner_id}`);
-    if (queryParams.length === 0) {
-      queryString += `WHERE owner_id = $${queryParams.length} `;
-    } else {
-      queryString += `AND owner_id = $${queryParams.length} `;
-    }
+    queryString += `${clause} owner_id = $${queryParams.length} `;
   }
   
   // if minimum_price_per_night AND/OR maximum_price_per_night value is passed in, show only properties in this price range
   if (options.minimum_price_per_night && options.maximum_price_per_night) {
+    const clause = (queryParams.length === 0) ? 'WHERE' : 'AND';
     queryParams.push(`${options.minimum_price_per_night}`);
     queryParams.push(`${options.maximum_price_per_night}`);
-    if (queryParams.length === 0) {
-      queryString += `WHERE (cost_per_night BETWEEN $${queryParams.length - 1} AND $${queryParams.length}`;
-    } else {
-      queryString += `AND (cost_per_night/100) BETWEEN $${queryParams.length - 1} AND $${queryParams.length}`;
-    }
+    queryString += `${clause} (cost_per_night/100) BETWEEN $${queryParams.length - 1} AND $${queryParams.length}`;
+
   } else if (options.minimum_price_per_night) {
+    const clause = (queryParams.length === 0) ? 'WHERE' : 'AND';
     queryParams.push(`${options.minimum_price_per_night}`);
-    if (queryParams.length === 0) {
-      queryString += `WHERE (cost_per_night/100) >= $${queryParams.length} `;
-    } else {
-      queryString += `AND (cost_per_night/100) >= $${queryParams.length} `;
-    }
+    queryString += `${clause} (cost_per_night/100) >= $${queryParams.length} `;
+
   } else if (options.maximum_price_per_night) {
+    const clause = (queryParams.length === 0) ? 'WHERE' : 'AND';
     queryParams.push(`${options.maximum_price_per_night}`);
-    if (queryParams.length === 0) {
-      queryString += `WHERE (cost_per_night/100) <= $${queryParams.length} `;
-    } else {
-      queryString += `AND (cost_per_night/100) <= $${queryParams.length} `;
-    }
+    queryString += `${clause} (cost_per_night/100) <= $${queryParams.length} `;
   }
   
   //if minimum_rating is passed in, only show properties with greater or equal this rating
   if (options.minimum_rating) {
+    const clause = (queryParams.length === 0) ? 'WHERE' : 'AND';
     queryParams.push(`${options.minimum_rating}`);
-    if (queryParams.length === 0) {
-      queryString += `WHERE rating >= $${queryParams.length} `;
-    } else {
-      queryString += `AND rating >= $${queryParams.length} `;
-    }
+    queryString += `${clause} rating >= $${queryParams.length} `;
   }
   
   // query that comes after the WHERE clause
