@@ -6,7 +6,7 @@ LightBnB is a simple, multi-page AirBnB clone that uses server-side JavaScript t
 
 To apply existing knowledge of complex SQL queries, database and ERD (entity relationship diagram) design to integrate the database with a Node backend.
 
-## App Screenshots
+## Gallery
 
 | ![LightBnB_ERD.png](./docs/LightBnB_ERD.png) | 
 |:--:| 
