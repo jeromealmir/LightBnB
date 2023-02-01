@@ -1,6 +1,20 @@
 const properties = require('./json/properties.json');
 const users = require('./json/users.json');
 
+// connect to database using node-postgres
+const { Pool } = require('pg');
+
+const pool = new Pool({
+  user: 'vagrant',
+  password: '123',
+  host: 'localhost',
+  database: 'lightbnb'
+});
+
+pool.query(`SELECT title FROM properties LIMIT 10;`).then(response => {
+
+})
+
 /// Users
 
 /**
