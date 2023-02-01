@@ -20,8 +20,8 @@ const pool = new Pool({
  */
 const getUserWithEmail = function(email) {
 
-   //connect to database and retrieve user with email
-   return pool
+  //connect to database and retrieve user with email
+  return pool
     .query(
       `SELECT * FROM users WHERE email = $1`,
       [email])
@@ -32,7 +32,7 @@ const getUserWithEmail = function(email) {
       return null;
     });
 
-}
+};
 exports.getUserWithEmail = getUserWithEmail;
 
 /**
@@ -54,7 +54,7 @@ const getUserWithId = function(id) {
       return null;
     });
 
-}
+};
 exports.getUserWithId = getUserWithId;
 
 /**
@@ -80,7 +80,7 @@ const addUser =  function(user) {
       return null;
     });
 
-}
+};
 exports.addUser = addUser;
 
 /// Reservations
@@ -106,13 +106,13 @@ const getAllReservations = function(guest_id, limit = 10) {
       LIMIT $2`,
       [guest_id, limit])
     .then((result) => {
-      return result.rows
+      return result.rows;
     })
     .catch((err) => {
       return null;
     });
 
-}
+};
 exports.getAllReservations = getAllReservations;
 
 /// Properties
@@ -125,8 +125,6 @@ exports.getAllReservations = getAllReservations;
  */
 
 const getAllProperties = function(options, limit = 10) {
-
-  console.log(options)
   
   // array to hold any parameters that may be available for the query
   const queryParams = [];
@@ -184,20 +182,16 @@ const getAllProperties = function(options, limit = 10) {
   LIMIT $${queryParams.length};
   `;
 
-  // 5
-  console.log(queryString, queryParams);
-
-  // 6
   //connect to database and retrieve all property listings
   return pool
     .query(queryString, queryParams)
-      .then((result) => {
-        return result.rows;
-      })
-      .catch((err) => {
-        console.log(err.message);
-      });
-}
+    .then((result) => {
+      return result.rows;
+    })
+    .catch((err) => {
+      return null;
+    });
+};
 exports.getAllProperties = getAllProperties;
 
 /**
@@ -210,5 +204,5 @@ const addProperty = function(property) {
   property.id = propertyId;
   properties[propertyId] = property;
   return Promise.resolve(property);
-}
+};
 exports.addProperty = addProperty;
