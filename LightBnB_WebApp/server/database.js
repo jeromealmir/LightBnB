@@ -1,6 +1,3 @@
-const properties = require('./json/properties.json');
-const users = require('./json/users.json');
-
 // connect to database using node-postgres
 const { Pool } = require('pg');
 
@@ -97,7 +94,6 @@ const getAllReservations = function(guest_id, limit = 10) {
     .query(
       `SELECT properties.*, avg(property_reviews.rating) as average_rating
       FROM reservations
-      JOIN users ON users.id = guest_id
       JOIN properties ON properties.id = property_id
       JOIN property_reviews ON property_reviews.property_id = properties.id
       WHERE reservations.guest_id = $1
@@ -154,17 +150,17 @@ const getAllProperties = function(options, limit = 10) {
     const clause = (queryParams.length === 0) ? 'WHERE' : 'AND';
     queryParams.push(`${options.minimum_price_per_night}`);
     queryParams.push(`${options.maximum_price_per_night}`);
-    queryString += `${clause} (cost_per_night/100) BETWEEN $${queryParams.length - 1} AND $${queryParams.length}`;
+    queryString += `${clause} (cost_per_night*0.01) BETWEEN $${queryParams.length - 1} AND $${queryParams.length}`;
 
   } else if (options.minimum_price_per_night) {
     const clause = (queryParams.length === 0) ? 'WHERE' : 'AND';
     queryParams.push(`${options.minimum_price_per_night}`);
-    queryString += `${clause} (cost_per_night/100) >= $${queryParams.length} `;
+    queryString += `${clause} (cost_per_night*0.01) >= $${queryParams.length} `;
 
   } else if (options.maximum_price_per_night) {
     const clause = (queryParams.length === 0) ? 'WHERE' : 'AND';
     queryParams.push(`${options.maximum_price_per_night}`);
-    queryString += `${clause} (cost_per_night/100) <= $${queryParams.length} `;
+    queryString += `${clause} (cost_per_night*0.01) <= $${queryParams.length} `;
   }
   
   //if minimum_rating is passed in, only show properties with greater or equal this rating
