@@ -125,7 +125,6 @@ const getAllProperties = function(options, limit = 10) {
   // array to hold any parameters that may be available for the query
   const queryParams = [];
 
-  
   // query with all information that comes before the WHERE clause
   let queryString = `
   SELECT properties.*, avg(property_reviews.rating) as average_rating
@@ -176,6 +175,7 @@ const getAllProperties = function(options, limit = 10) {
     LIMIT $${queryParams.length};
     `;
   } else {
+    // query that comes after the WHERE clause
     queryParams.push(limit);
     queryString += `
     GROUP BY properties.id
@@ -183,8 +183,6 @@ const getAllProperties = function(options, limit = 10) {
     LIMIT $${queryParams.length};
     `;
   }
-  
-  // query that comes after the WHERE clause
   
   //connect to database and retrieve all property listings
   return pool
