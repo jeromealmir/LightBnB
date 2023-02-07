@@ -124,6 +124,7 @@ const getAllProperties = function(options, limit = 10) {
   
   // array to hold any parameters that may be available for the query
   const queryParams = [];
+
   
   // query with all information that comes before the WHERE clause
   let queryString = `
@@ -151,12 +152,12 @@ const getAllProperties = function(options, limit = 10) {
     queryParams.push(`${options.minimum_price_per_night}`);
     queryParams.push(`${options.maximum_price_per_night}`);
     queryString += `${clause} (cost_per_night*0.01) BETWEEN $${queryParams.length - 1} AND $${queryParams.length}`;
-
+    
   } else if (options.minimum_price_per_night) {
     const clause = (queryParams.length === 0) ? 'WHERE' : 'AND';
     queryParams.push(`${options.minimum_price_per_night}`);
     queryString += `${clause} (cost_per_night*0.01) >= $${queryParams.length} `;
-
+    
   } else if (options.maximum_price_per_night) {
     const clause = (queryParams.length === 0) ? 'WHERE' : 'AND';
     queryParams.push(`${options.maximum_price_per_night}`);
@@ -167,26 +168,33 @@ const getAllProperties = function(options, limit = 10) {
   if (options.minimum_rating) {
     const clause = (queryParams.length === 0) ? 'WHERE' : 'AND';
     queryParams.push(`${options.minimum_rating}`);
-    queryString += `${clause} rating >= $${queryParams.length} `;
+    queryParams.push(limit);
+    queryString += `
+    GROUP BY properties.id
+    HAVING avg(property_reviews.rating) >= $${queryParams.length - 1} 
+    ORDER BY cost_per_night
+    LIMIT $${queryParams.length};
+    `;
+  } else {
+    queryParams.push(limit);
+    queryString += `
+    GROUP BY properties.id
+    ORDER BY cost_per_night
+    LIMIT $${queryParams.length};
+    `;
   }
   
   // query that comes after the WHERE clause
-  queryParams.push(limit);
-  queryString += `
-  GROUP BY properties.id
-  ORDER BY cost_per_night
-  LIMIT $${queryParams.length};
-  `;
-
+  
   //connect to database and retrieve all property listings
   return pool
-    .query(queryString, queryParams)
-    .then((result) => {
-      return result.rows;
-    })
-    .catch((err) => {
-      return null;
-    });
+  .query(queryString, queryParams)
+  .then((result) => {
+    return result.rows;
+  })
+  .catch((err) => {
+    return null;
+  });
 };
 exports.getAllProperties = getAllProperties;
 
